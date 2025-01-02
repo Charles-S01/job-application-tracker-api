@@ -13,7 +13,7 @@ function verifyToken(req, res, next) {
             return res.status(404).json({ message: "Could not read access token" })
         }
 
-        jwt.verify(token, "accessTokenSecret", (err, decodedPayload) => {
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decodedPayload) => {
             if (err) {
                 return res.status(401).json({ message: "Unauthorized" })
             }

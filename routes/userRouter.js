@@ -32,7 +32,7 @@ userRouter.post("/", async (req, res, next) => {
                     password: hashedPassword,
                 },
             })
-            res.json({ user, message: "Successfuly signed up" })
+            res.json({ user, message: "successfuly signed up" })
         })
     } catch (error) {
         next(error)
@@ -50,9 +50,9 @@ userRouter.get("/", verifyToken, async (req, res, next) => {
             },
         })
         if (!user) {
-            return res.status(401).json({ message: "Could not get user" })
+            return res.status(401).json({ message: "could not get user" })
         }
-        console.log("get /user user:", user)
+        // console.log("get /user user:", user)
 
         res.json({ user })
     } catch (error) {

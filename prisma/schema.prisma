@@ -24,12 +24,13 @@ model User {
 
 model Job {
   id          String   @id
-  dateApplied DateTime @default(now())
+  dateCreated DateTime @default(now())
+  dateApplied String?
   title       String
   location    String?
   company     String?
   link        String?
-  status      Status   @default(BOOKMARKED)
+  status      String
   user        User     @relation(fields: [userId], references: [id])
   userId      String
 }
