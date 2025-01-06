@@ -8,7 +8,12 @@ const cookieParser = require("cookie-parser")
 
 const app = express()
 
-app.use(cors({ origin: "http://localhost:5177", credentials: true }))
+app.use(
+    cors({
+        origin: ["http://localhost:5177", "https://job-apps-tracker-jade.vercel.app"],
+        credentials: true,
+    })
+)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
@@ -21,6 +26,7 @@ app.use((err, req, res, next) => {
     res.status(500).send("Internal server error!")
 })
 
-app.listen(3001, () => {
-    console.log("Server listening on port 3001")
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+    console.log("Server listening on port " + PORT)
 })
