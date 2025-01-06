@@ -35,20 +35,45 @@ jobsRouter.get("/:jobId?", verifyToken, async (req, res, next) => {
         console.log("get jobs")
         const userId = req.user.id
         const { jobId } = req.params
-        const { status } = req.query
+        const { status, searchInput, sortBy } = req.query
         console.log("status:", status)
+        console.log("searchInput:", searchInput)
 
         const jobs = await prisma.job.findMany({
             where: {
                 userId: userId,
                 ...(jobId && { id: jobId }),
                 ...(status && { status: status }),
+                ...(searchInput && {
+                    OR: [
+                        {
+                            title: {
+                                contains: searchInput,
+                                mode: "insensitive",
+                            },
+                        },
+                        {
+                            company: {
+                                contains: searchInput,
+                                mode: "insensitive",
+                            },
+                        },
+                        {
+                            location: {
+                                contains: searchInput,
+                                mode: "insensitive",
+                            },
+                        },
+                    ],
+                }),
             },
             orderBy: {
-                dateApplied: "desc",
+                ...(sortBy === "dateApplied" && { dateApplied: "desc" }),
+                ...(sortBy === "title" && { title: "asc" }),
+                ...(sortBy === "company" && { company: "asc" }),
+                ...(sortBy === "location" && { location: "asc" }),
             },
         })
-        // console.log("jobs:", jobs)
 
         res.json({ jobs })
     } catch (error) {
@@ -78,6 +103,22 @@ jobsRouter.put("/:jobId", verifyToken, async (req, res, next) => {
         })
 
         res.json({ job })
+    } catch (error) {
+        next(error)
+    }
+})
+
+jobsRouter.delete("/:jobId", verifyToken, async (req, res, next) => {
+    try {
+        const { jobId } = req.params
+        const userId = req.user.id
+        const job = await prisma.job.delete({
+            where: {
+                userId: userId,
+                id: jobId,
+            },
+        })
+        res.json({ job, message: "job deleted" })
     } catch (error) {
         next(error)
     }

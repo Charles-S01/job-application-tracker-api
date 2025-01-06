@@ -76,12 +76,38 @@ authRouter.post("/login", async (req, res, next) => {
     }
 })
 
+authRouter.post("/refresh", async (req, res, next) => {
+    try {
+        console.log("/refresh")
+        const refreshToken = req.cookies.refreshToken
+        if (!refreshToken) {
+            res.status(401).json({ message: "No refresh token found" })
+        }
+
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, function (err, decoded) {
+            if (err) {
+                return res.status(401).json({ message: "Unable to verify refresh token" })
+            }
+
+            const token = generateAccessToken(decoded)
+
+            res.json({ token, message: "New token generated" })
+        })
+    } catch (error) {
+        next(error)
+    }
+})
+
 function generateAccessToken(user) {
-    return jwt.sign({ id: user.id, username: user.username }, process.env.ACCESS_TOKEN_SECRET)
+    return jwt.sign({ id: user.id, username: user.username }, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "15m",
+    })
 }
 
 function generateRefreshToken(user) {
-    return jwt.sign({ id: user.id, username: user.username }, process.env.REFRESH_TOKEN_SECRET)
+    return jwt.sign({ id: user.id, username: user.username }, process.env.REFRESH_TOKEN_SECRET, {
+        expiresIn: "15d",
+    })
 }
 
 module.exports = authRouter

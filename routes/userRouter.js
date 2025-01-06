@@ -48,6 +48,11 @@ userRouter.get("/", verifyToken, async (req, res, next) => {
             where: {
                 id: userId,
             },
+            include: {
+                _count: {
+                    select: { jobs: { where: { status: "applied" } } },
+                },
+            },
         })
         if (!user) {
             return res.status(401).json({ message: "could not get user" })
@@ -55,6 +60,27 @@ userRouter.get("/", verifyToken, async (req, res, next) => {
         // console.log("get /user user:", user)
 
         res.json({ user })
+    } catch (error) {
+        next(error)
+    }
+})
+
+userRouter.put("/", verifyToken, async (req, res, next) => {
+    try {
+        const userId = req.user.id
+        const { firstName, lastName } = req.body
+
+        const user = await prisma.user.update({
+            where: {
+                id: userId,
+            },
+            data: {
+                firstName: firstName,
+                lastName: lastName,
+            },
+        })
+
+        res.json({ user, message: "user updated" })
     } catch (error) {
         next(error)
     }
