@@ -10,7 +10,7 @@ const app = express()
 
 app.use(
     cors({
-        origin: ["http://localhost:5177", "https://job-apps-tracker-jade.vercel.app"],
+        origin: process.env.ORIGIN_URL,
         credentials: true,
     })
 )
@@ -26,7 +26,7 @@ app.use((err, req, res, next) => {
     res.status(500).send("Internal server error!")
 })
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log("Server listening on port " + PORT)
 })
