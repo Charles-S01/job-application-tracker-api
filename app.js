@@ -10,7 +10,7 @@ const app = express()
 
 app.use(
     cors({
-        origin: process.env.ORIGIN_URL,
+        origin: "job-apps-tracker-charles.vercel.app",
         credentials: true,
     })
 )
