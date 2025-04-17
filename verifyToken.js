@@ -17,7 +17,7 @@ function verifyToken(req, res, next) {
             if (err) {
                 return res.status(401).json({ message: "Unauthorized" })
             }
-            console.log("verifyToken decoded:", decodedPayload)
+            // console.log("verifyToken decoded:", decodedPayload)
 
             req.user = decodedPayload
             next()

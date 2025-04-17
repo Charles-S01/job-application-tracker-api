@@ -27,6 +27,7 @@ model Job {
   dateCreated DateTime @default(now())
   dateApplied String?
   title       String
+  description String?
   location    String?
   company     String?
   link        String?
